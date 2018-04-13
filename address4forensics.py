@@ -4,7 +4,7 @@ parser = argparse.ArgumentParser(prog='address4forensics')
 
 # Group that takes input for -L|-P|-C
 calc_group = parser.add_mutually_exclusive_group(required=True)
-calc_group.add_argument('-L', action='store_true',
+calc_group.add_argument('-L', '--logical', action='store_true',
 					help='Calculates the logical address from either the cluster ' +
 					'address or the physical address. Either -c or -p must be given.')
 calc_group.add_argument('-P', '--physical', action='store_true',
