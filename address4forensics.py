@@ -4,7 +4,7 @@ parser = argparse.ArgumentParser(prog='address4forensics')
 
 # Group that takes input for -L|-P|-C
 calc_group = parser.add_mutually_exclusive_group(required=True)
-calc_group.add_argument('-L', '--logical', action='store_true',
+calc_group.add_argument('-L', action='store_true',
 					help='Calculates the logical address from either the cluster ' +
 					'address or the physical address. Either -c or -p must be given.')
 calc_group.add_argument('-P', '--physical', action='store_true',
@@ -51,29 +51,36 @@ parser.add_argument('-f', '--fat-length', metavar='sectors', dest='fat_length', 
 
 args = parser.parse_args()
 
-
-
-if args.logical:
+if args.L:
 	if args.logical_address:
 		if args.useByte:
 			print((args.logical_address+args.offset)*args.bytes)
 		else:
-			print(args.logical_address)
+			print(args.logical_address+args.offset)
 	elif args.physical_address:
-		#todo
-		print('to-do')
+		if args.useByte:
+			print('calculate logical from physical, then multiply by bytes')
+		else:
+			print('calculate logical from physical, print')
 	elif args.cluster_address:
-		#todo
-		print('to-do')
+		if args.useByte:
+			print('calculate logical from cluster, then multiply by bytes')
+		else:
+			print('calculate logical from cluster, print')
 elif args.physical:
 	if args.physical_address:
 		if args.useByte:
 			print((args.physical_address+args.offset)*args.bytes)
 		else:
-			print(args.physical_address)
+			print(args.physical_address+args.offset)
+	elif args.logical_address:
+		if args.useByte:
+			print('calculate physical from logical, then multiply by bytes')
+		else:
+			print('calculate physical from logical, print')
 elif args.cluster:
 	if args.cluster_address:
 		if args.useByte:
 			print((args.cluster_address+args.offset)*args.bytes)
 		else:
-			print(args.cluster_address)
+			print(args.cluster_address+args.offset)
