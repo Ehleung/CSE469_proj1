@@ -1,4 +1,5 @@
 import argparse
+import sys
 
 parser = argparse.ArgumentParser(prog='address4forensics')
 
@@ -51,36 +52,46 @@ parser.add_argument('-f', '--fat-length', metavar='sectors', dest='fat_length', 
 
 args = parser.parse_args()
 
-if args.L:
+#temporary value assignment
+returnValue = None
+
+# If logical, need to subtract the offset from address
+if args.logical:
+	# -L -l
 	if args.logical_address:
-		if args.useByte:
-			print((args.logical_address+args.offset)*args.bytes)
-		else:
-			print(args.logical_address+args.offset)
+		returnValue = args.logical_address
+	# -L -p
 	elif args.physical_address:
-		if args.useByte:
-			print('calculate logical from physical, then multiply by bytes')
-		else:
-			print('calculate logical from physical, print')
+		returnValue = args.physical_address - args.offset
+	# -L -c
 	elif args.cluster_address:
-		if args.useByte:
-			print('calculate logical from cluster, then multiply by bytes')
+		# Check for valid input in -c parameters
+		if args.cluster_size == None or args.reserved == None or args.tables == None or args.fat_length == None:
+			print('-k -r -t -f are all required parameters for -c. Please check your input.')
+			sys.exit(1)
 		else:
-			print('calculate logical from cluster, print')
+			# value = offset + (cluster_known - 2) * sectors per cluster + reserved sectors + (number of tables * number of sectors per table)
+			temp = args.offset + ((cluster_address - 2) * args.cluster_size) + args.reserved + (args.tables * args.fat_length)
+			returnValue = temp - args.offset
+
+# If physical, need to add the offset to address
 elif args.physical:
 	if args.physical_address:
-		if args.useByte:
-			print((args.physical_address+args.offset)*args.bytes)
-		else:
-			print(args.physical_address+args.offset)
+		returnValue = args.physical_address
 	elif args.logical_address:
-		if args.useByte:
-			print('calculate physical from logical, then multiply by bytes')
-		else:
-			print('calculate physical from logical, print')
+		returnValue = args.logical_address + args.offset
+	elif args.cluster_address:
+		#todo
+		returnValue = args.cluster_address
 elif args.cluster:
 	if args.cluster_address:
-		if args.useByte:
-			print((args.cluster_address+args.offset)*args.bytes)
-		else:
-			print(args.cluster_address+args.offset)
+		returnValue = args.cluster_address
+	elif args.logical_address:
+		#todo
+		returnValue = args.logical_address
+	elif args.physical_address:
+		#todo
+		returnValue = args.physical_address
+
+if args.useByte:
+	returnValue = returnValue*args.bytes
