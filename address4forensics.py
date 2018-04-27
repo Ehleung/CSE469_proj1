@@ -16,7 +16,7 @@ calc_group.add_argument('-C', '--cluster', action='store_true',
 					'address or the physical address. Either -l or -p must be given.')
 
 # -b offset
-parser.add_argument('-b', '--partition-start', dest='offset', type=int, default=0,
+parser.add_argument('-b', '--partition-start', dest='offset', metavar='offset', type=int, default=0,
 					help='Specifies the physical address (sector number) of the partition\'s beginning. ' +
 					'Defaults to 0 for ease with single partition images. The offset will always translate '+
 					'into logical address 0.')
@@ -24,7 +24,7 @@ parser.add_argument('-b', '--partition-start', dest='offset', type=int, default=
 # Grouping for [-B [-s bytes]]
 parser.add_argument('-B', '--byte-address', action='store_true', dest='useByte',
 					help='Returns the byte address of the calculated value instead of the sector value.')
-parser.add_argument('-s', '--sector-size', dest='bytes', type=int, default=512,
+parser.add_argument('-s', '--sector-size', dest='bytes', metavar='bytes', type=int, default=512,
 					help='Used to specify the bytes per sector when used with \'-B\'. The default is 512.')
 
 # [-l address]
@@ -45,7 +45,7 @@ parser.add_argument('-k', '--cluster-size', metavar='sectors', dest='cluster_siz
 					help='Specifies the number of sectors per cluster.')
 parser.add_argument('-r', '--reserved', metavar='sectors', dest='reserved', type=int,
 					help='Specifies the number of reserved sectors in the partition.')
-parser.add_argument('-t', '--tables', dest='tables', type=int, default=2,
+parser.add_argument('-t', '--tables', dest='tables', metavar='tables', type=int, default=2,
 					help='Specifies the number of FAT tables. The default is 2.')
 parser.add_argument('-f', '--fat-length', metavar='sectors', dest='fat_length', type=int,
 					help='Specifies the length of each FAT table in sectors.')
@@ -57,22 +57,19 @@ returnValue = None
 
 # If logical, need to subtract the offset from address
 if args.logical:
-	# -L -l
 	if args.logical_address:
 		returnValue = args.logical_address
-	# -L -p
 	elif args.physical_address:
 		returnValue = args.physical_address - args.offset
-	# -L -c
 	elif args.cluster_address:
 		# Check for valid input in -c parameters
 		if args.cluster_size == None or args.reserved == None or args.tables == None or args.fat_length == None:
 			print('-k -r -t -f are all required parameters for -c. Please check your input.')
 			sys.exit(1)
 		else:
-			# value = offset + (cluster_known - 2) * sectors per cluster + reserved sectors + (number of tables * number of sectors per table)
-			temp = args.offset + ((cluster_address - 2) * args.cluster_size) + args.reserved + (args.tables * args.fat_length)
-			returnValue = temp - args.offset
+			# value = (cluster_known - 2) * sectors per cluster + reserved sectors + (number of tables * number of sectors per table)
+			# Don't need to add offset because of logical addr
+			temp = ((args.cluster_address - 2) * args.cluster_size) + args.reserved + (args.tables * args.fat_length)
 
 # If physical, need to add the offset to address
 elif args.physical:
@@ -81,16 +78,23 @@ elif args.physical:
 	elif args.logical_address:
 		returnValue = args.logical_address + args.offset
 	elif args.cluster_address:
-		#todo
-		returnValue = args.cluster_address
+		# Check for valid input in -c parameters
+		if args.cluster_size == None or args.reserved == None or args.tables == None or args.fat_length == None:
+			print('-k -r -t -f are all required parameters for -c. Please check your input.')
+			sys.exit(1)
+		else:
+			# value = offset + (cluster_known - 2) * sectors per cluster + reserved sectors + (number of tables * number of sectors per table)
+			returnValue = args.offset + ((args.cluster_address - 2) * args.cluster_size) + args.reserved + (args.tables * args.fat_length)
+
 elif args.cluster:
 	if args.cluster_address:
 		returnValue = args.cluster_address
-	# logical - 
 	elif args.logical_address:
-		returnValue = ((args.logical_address - args.reserved - (args.tables * args.fat_length)) / args.cluster_size) + 2
+		returnValue = args.logical_address + args.offset
 	elif args.physical_address:
 		returnValue = args.physical_address - args.offset
 
 if args.useByte:
 	returnValue = returnValue*args.bytes
+
+print (returnValue)
