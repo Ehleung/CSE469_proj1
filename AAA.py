@@ -3,15 +3,19 @@ import sys
 
 DEBUG = True
 
-def hash_checksum(filename):
+def hash_checksum(filepath):
     if DEBUG:
         print ('Generating Checksums')
         #print ("sha1-{}.txt".format(filename))
+
+    filename = filepath.split("/")[-1]
+    filename = filename.split(".")[-2]
+    #print (filename)
     md5file = open("md5-{}.txt".format(filename), 'w+')
     shafile = open("sha1-{}.txt".format(filename), 'w+')
     
-    md5file.write(hashlib.md5(open(filename, 'rb').read()).hexdigest())
-    shafile.write(hashlib.sha1(open(filename, 'rb').read()).hexdigest())    
+    md5file.write(hashlib.md5(open(filepath, 'rb').read()).hexdigest())
+    shafile.write(hashlib.sha1(open(filepath, 'rb').read()).hexdigest())    
     
     md5file.close()
     shafile.close()
@@ -19,8 +23,10 @@ def hash_checksum(filename):
     if DEBUG:
         print ('Checksums Generated')
 
+
 if __name__ == "__main__":
-    #print(sys.argv[1])
+    if DEBUG:
+        print(sys.argv)
 
     try:
         open(sys.argv[1], 'r')
@@ -28,6 +34,5 @@ if __name__ == "__main__":
         print ('Error, File not found')
         exit
 
-    print(sys.argv)
     hash_checksum(sys.argv[1])
-    print('exiting')
+print('exiting')
