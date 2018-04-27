@@ -86,12 +86,11 @@ elif args.physical:
 elif args.cluster:
 	if args.cluster_address:
 		returnValue = args.cluster_address
+	# logical - 
 	elif args.logical_address:
-		#todo
-		returnValue = args.logical_address
+		returnValue = ((args.logical_address - args.reserved - (args.tables * args.fat_length)) / args.cluster_size) + 2
 	elif args.physical_address:
-		#todo
-		returnValue = args.physical_address
+		returnValue = args.physical_address - args.offset
 
 if args.useByte:
 	returnValue = returnValue*args.bytes
