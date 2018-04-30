@@ -15,7 +15,7 @@ param_group.add_argument('-h', dest='hexval')
 args = parser.parse_args()
 
 if DEBUG:
-	print (args)
+	  print (args)
 
 print('D')
 dates = { 1 : 'Jan',
@@ -32,24 +32,23 @@ dates = { 1 : 'Jan',
           12: 'Dec'}
 
 def getHex():
-    if args.filename:
-        if DEBUG:
-            print('Reading data from File')
-	file = open(args.filename, 'r')
-        var = ""
-        while not var:
-	    var = file.readline()
-            var = var.split("0x", 1)
-            if len(var) == 1:
-                var = ""
-            print(var)
-	
-        var = var[-1][0:4]
+  if args.filename:
+    if DEBUG:
+      print('Reading data from File')
+    file = open(args.filename, 'r')
+      var = ""
+      while not var:
+        var = file.readline()
+        var = var.split("0x", 1)
+        if len(var) == 1:
+          var = ""
         print(var)
-	file.close()
-    else:
-        var = args.hexval
-    return var    
+      var = var[-1][0:4]
+      print(var)
+      file.close()
+  else:
+      var = args.hexval
+  return var
 
 
 if __name__ == "__main__":
