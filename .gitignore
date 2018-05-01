@@ -11,3 +11,11 @@ build/address4forensics/out00-PKG.toc
 build/address4forensics/out00-PYZ.pyz
 build/address4forensics/out00-PYZ.toc
 build/address4forensics/warnaddress4forensics.txt
+TestImage1.img
+TestImage2.img
+dd.exe
+libewf.dll
+md5-TestImage1.txt
+sha1-TestImage1.txt
+mmls.exe
+zlib.dll

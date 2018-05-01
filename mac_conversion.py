@@ -45,7 +45,7 @@ def getHex():
   else:
       #clean the input to only look for 0x and the next for bytes(characters) afterwards
       var = "0x" + args.hexval.partition("0x")[2][0:4]
-      print(var)
+      # print(var)
   return var
 
 
@@ -69,7 +69,8 @@ if __name__ == "__main__":
             hour = hour - 12
             TD = 'PM'
         time += str(hour) + ':' + str(int(binVal[5:11],2)) + ":" + str(2*int(binVal[11:16],2)).zfill(2) + " " + TD
-    
+        print(time)
+        
     else:  #parse for date
         date = "Date: "
 
