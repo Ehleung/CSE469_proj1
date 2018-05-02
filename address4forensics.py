@@ -1,3 +1,8 @@
+'''
+Brandon Nydam 1208178552
+Ellery Leung 1207157168
+CSE469 Project 1
+'''
 import argparse
 import sys
 
